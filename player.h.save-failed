@@ -1,0 +1,121 @@
+#ifndef PLAYER_H_INCLUDED
+#define PLAYER_H_INCLUDED
+
+#endif // PLAYER_H_INCLUDED
+
+struct player{
+float x;
+float y;
+float width;
+float height;
+float speed;
+
+vector2D tongue;
+vector2D shootDir;
+bool isShoot = false;
+int defaultShootTime = 15;
+int shootTimer = defaultShootTime;
+
+float distanceForLooting = 20;
+};
+
+
+
+vector2D inputKey(){
+
+vector2D direction;
+direction.x = 0;
+direction.y = 0;
+
+if(GetAsyncKeyState(VK_RIGHT)){
+    direction.x = 1;
+}
+if(GetAsyncKeyState(VK_LEFT)){
+    direction.x = -1;
+}
+if(GetAsyncKeyState(VK_UP)){
+    direction.y = -1;
+}
+if(GetAsyncKeyState(VK_DOWN)){
+    direction.y = 1;
+}
+
+direction = getNormalized(0,0,direction.x,direction.y);
+
+return direction;
+}
+
+vector2D inputMouse(){
+int x,y;
+getmouseclick(WM_LBUTTONDOWN, x, y);
+
+vector2D output;
+
+if(x > 0 && y > 0){
+output.x = (float)x;
+output.y = (float)y;
+}
+else{
+output.x = -1;
+output.y = -1;
+}
+return output;
+}
+
+void Shoot(player *Player){
+
+vector2D mousePos = inputMouse();
+if (mousePos.x > 0 && mousePos.y > 0 && !(*Player).isShoot){
+    // Check process of shooting tongue
+    (*Player).isShoot = true;
+
+    // Get direction where tongue will be shoot
+    (*Player).shootDir = getNormalized((*Player).x, (*Player).y, mousePos.x, mousePos.y);
+
+    // Define tongue position
+    (*Player).tongue.x = (*Player).x + (*Player).width/2 + (*Player).shootDir.x * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
+    (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
+}
+else if ((*Player).shootTimer > 0 && (*Player).isShoot){
+    // Decreasing Timer
+    (*Player).shootTimer--;
+
+    // Define tongue position
+    (*Player).tongue.x = (*Player).x + (*Player).width/2 + (*Player).shootDir.x * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
+    (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
+}
+else if ((*Player).isShoot){
+    (*Player).shootTimer = (*Player).defaultShootTime;
+    (*Player).isShoot = false;
+}
+}
+
+void playerMovement(EnvironmentObject Scene[], Mob Creatures[], player *Player, float windowWidth, float windowHeight){
+
+  vector2D screenCenter;
+  screenCenter.x = windowWidth/2-(*Player).width/2;
+  screenCenter.y = windowHeight/2-(*Player).height/2;
+
+  float accessMovementDistance = 120;
+
+  vector2D barrier = getNormalized(screenCenter.x, screenCenter.y, (*Player).x, (*Player).y);
+  float currentRadius = getDistance(screenCenter.x,
+                                    screenCenter.y,
+                                    (*Player).x,
+                                    (*Player).y);
+
+  if(currentRadius > accessMovementDistance){
+    (*Player).x = screenCenter.x + barrier.x*(accessMovementDistance-2);
+    (*Player).y = screenCenter.y + barrier.y*(accessMovementDistance-2);
+
+     for(int i=0; i<=sizeof(Scene); i++){
+        Scene[i].x -= barrier.x*(*Player).speed;
+        Scene[i].y -= barrier.y*(*Player).speed;
+     }
+
+     for(int i=0; i<=sizeof(Creatures); i++){
+        Creatures[i].x -= barrier.x*(*Player).speed;
+        Creatures[i].y -= barrier.y*(*Player).speed;
+     }
+  }
+}

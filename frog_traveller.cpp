@@ -50,7 +50,11 @@ int main(void) {
     Scene[i].x += i*35;
    }
 
+   int page = 0;
    while(true){
+    setactivepage(page);
+    setvisualpage(1-page);
+
     deltatime = getDeltaTime();
     cleardevice(); // Clear screen
     rectangle(Player.x,Player.y, Player.x+Player.width, Player.y+Player.height); // draw Player as rectangle
@@ -61,7 +65,7 @@ int main(void) {
     if(Player.isShoot){ // draw if you clicked mouse
     circle(Player.tongue.x, Player.tongue.y, 10);
     }
-    Player.speed = Player.defaultSpeed * deltatime;
+    //Player.speed = Player.defaultSpeed * deltatime;
 
 
     for(int i=0; i<amountSceneObjects; i++){
@@ -69,7 +73,7 @@ int main(void) {
     }
 
     for(int i=0; i<amountCreatures; i++){
-        Creatures[i].speed = Creatures[i].defaultSpeed * deltatime;
+        //Creatures[i].speed = Creatures[i].defaultSpeed * deltatime;
 
         if(Creatures[i].isExist){
             circle(Creatures[i].x, Creatures[i].y, Creatures[i].radiusCollision);
@@ -86,7 +90,7 @@ int main(void) {
     cameraMovement(Scene, Creatures, &Player, windowWidth, windowHeight); // Camera follow to player
 
 
-    delay(1000*deltatime/60);
-
+    delay(10);
+    page = 1 - page;
    }
 }

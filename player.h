@@ -9,18 +9,22 @@ float x;
 float y;
 float width = 50;
 float height = 50;
-float defaultSpeed = 2;
+float defaultSpeed = 7;
 float speed = defaultSpeed;
 
 vector2D tongue;
 vector2D shootDir;
-bool isShoot = false;
-int defaultShootTime = 4500;
-int shootTimer = defaultShootTime;
-int defaultShootSpeed = 75;
-int shootSpeed = defaultShootSpeed;
 
-float distanceForLootingMobByTongue = 30;
+bool isShoot = false;
+bool isUsedAllLengthOfTongue = false;
+
+
+float defaultShootDistance = 200;
+float shootDistance = defaultShootDistance;
+float defaultShootSpeed = 20;
+float shootSpeed = defaultShootSpeed;
+
+float distanceForLootingMobByTongue = 25;
 };
 
 
@@ -67,30 +71,48 @@ return output;
 }
 
 void Shoot(player *Player){
-
 vector2D mousePos = inputMouse();
-if (mousePos.x > 0 && mousePos.y > 0 && !(*Player).isShoot){
+if (!(*Player).isShoot && mousePos.x > 0 && mousePos.y > 0){
     // Check process of shooting tongue
     (*Player).isShoot = true;
 
     // Get direction where tongue will be shoot
-    (*Player).shootDir = getNormalized((*Player).x, (*Player).y, mousePos.x, mousePos.y);
+    (*Player).shootDir = getNormalized((*Player).x+(*Player).width/2, (*Player).y+(*Player).height/2, mousePos.x, mousePos.y);
+
+    // Start position of tongue
+    (*Player).tongue.x = (*Player).x + (*Player).width/2 + (*Player).shootDir.x * (*Player).shootSpeed;
+    (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * (*Player).shootSpeed;
+}
+else if ((*Player).isShoot &&  !(*Player).isUsedAllLengthOfTongue){
+    (*Player).shootDir = getNormalized(0, 0, (*Player).shootDir.x*1.1, (*Player).shootDir.y*1.1);
 
     // Define tongue position
-    (*Player).tongue.x = (*Player).x + (*Player).width/2 + (*Player).shootDir.x * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
-    (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
+    (*Player).tongue.x += (*Player).shootDir.x * (*Player).shootSpeed;
+    (*Player).tongue.y += (*Player).shootDir.y * (*Player).shootSpeed;
+
+
+
+    // Decreasing distance between tongue and player
+    (*Player).shootDistance -= (*Player).shootSpeed;
+    if((*Player).shootDistance <= 0){
+        (*Player).isUsedAllLengthOfTongue = true;
+        (*Player).shootDistance = (*Player).defaultShootDistance;
+    }
 }
-else if ((*Player).shootTimer > 0 && (*Player).isShoot){
-    // Decreasing Timer
-    (*Player).shootTimer-=(*Player).shootSpeed;
+else if ((*Player).isShoot && (*Player).isUsedAllLengthOfTongue){
+
+    // Get direction where tongue was shoot
+    (*Player).shootDir = getNormalized((*Player).x+(*Player).width/2, (*Player).y+(*Player).height/2, (*Player).tongue.x, (*Player).tongue.y);
 
     // Define tongue position
-    (*Player).tongue.x = (*Player).x + (*Player).width/2 + (*Player).shootDir.x * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
-    (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * 250 * sin(M_PI*(float)(*Player).shootTimer/(*Player).defaultShootTime);
-}
-else if ((*Player).isShoot){
-    (*Player).shootTimer = (*Player).defaultShootTime;
-    (*Player).isShoot = false;
+    (*Player).tongue.x -= (*Player).shootDir.x*(*Player).shootSpeed;
+    (*Player).tongue.y -= (*Player).shootDir.y*(*Player).shootSpeed;
+
+    if(getDistance((*Player).tongue.x, (*Player).tongue.y, (*Player).x+(*Player).width/2, (*Player).y+(*Player).height/2) <= (*Player).distanceForLootingMobByTongue){
+        (*Player).isShoot = false;
+        (*Player).isUsedAllLengthOfTongue = false;
+    }
+
 }
 }
 

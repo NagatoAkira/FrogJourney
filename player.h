@@ -9,13 +9,13 @@ float x;
 float y;
 float width = 50;
 float height = 50;
-float defaultSpeed = 5;
+float defaultSpeed = 2;
 float speed = defaultSpeed;
 
 vector2D tongue;
 vector2D shootDir;
 bool isShoot = false;
-int defaultShootTime = 1500;
+int defaultShootTime = 4500;
 int shootTimer = defaultShootTime;
 int defaultShootSpeed = 75;
 int shootSpeed = defaultShootSpeed;

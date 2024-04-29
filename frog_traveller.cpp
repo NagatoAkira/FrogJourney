@@ -6,6 +6,7 @@
 
 #include<math.h>
 
+#include"deltatime.h"
 #include"base.h"
 #include"player.h"
 #include"mobs.h"
@@ -14,6 +15,8 @@
 
 
 int main(void) {
+   float deltatime;
+
    // Initiate window
    float windowWidth = 800;
    float windowHeight = 800;
@@ -48,6 +51,7 @@ int main(void) {
    }
 
    while(true){
+    deltatime = getDeltaTime();
     cleardevice(); // Clear screen
     rectangle(Player.x,Player.y, Player.x+Player.width, Player.y+Player.height); // draw Player as rectangle
 
@@ -57,6 +61,7 @@ int main(void) {
     if(Player.isShoot){ // draw if you clicked mouse
     circle(Player.tongue.x, Player.tongue.y, 10);
     }
+    Player.speed = Player.defaultSpeed * deltatime;
 
 
     for(int i=0; i<amountSceneObjects; i++){
@@ -64,6 +69,8 @@ int main(void) {
     }
 
     for(int i=0; i<amountCreatures; i++){
+        Creatures[i].speed = Creatures[i].defaultSpeed * deltatime;
+
         if(Creatures[i].isExist){
             circle(Creatures[i].x, Creatures[i].y, Creatures[i].radiusCollision);
         }
@@ -76,9 +83,10 @@ int main(void) {
     vector2D dir = inputKey(); // get input keys
     Player.x += dir.x * Player.speed; // move in axis x
     Player.y += dir.y * Player.speed; // move in axis y
-    cameraMovement(Scene, Creatures, &Player, windowWidth, windowHeight); // Make barrier for player movement
+    cameraMovement(Scene, Creatures, &Player, windowWidth, windowHeight); // Camera follow to player
 
-    delay(10); //wait time
+
+    delay(1000*deltatime/60);
 
    }
 }

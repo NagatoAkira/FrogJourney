@@ -8,7 +8,7 @@ struct Mob{
 float x;
 float y;
 float radiusCollision;
-float defaultSpeed = 5;
+float defaultSpeed = 250;
 float speed = defaultSpeed;
 
 //Special variables for mob
@@ -17,7 +17,7 @@ float goalDirX;
 float goalDirY;
 float defaultGoalDistance = 200; // Distance which must be went by mob in calm state
 float goalDistance = 0; // Don't change
-int defaultWaitTime = 100; // Wait time for calm state between movement in space
+int defaultWaitTime = 1000; // Wait time for calm state between movement in space
 int waitTime = 0; // Don't change
 
 bool isCatched = false; // State of catching mob by tongue
@@ -82,7 +82,6 @@ if(Creatures[index].isCatched && Creatures[index].isExist){
 }
 
 void MobCalmMovement(Mob Creatures[], int index){
-
 if(Creatures[index].waitTime <= 0){
 if(Creatures[index].goalDistance > 0){
 Creatures[index].x += Creatures[index].goalDirX*Creatures[index].speed;

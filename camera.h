@@ -7,7 +7,6 @@
 
 
 void cameraMovement(EnvironmentObject Scene[], Mob Creatures[], player *Player, float windowWidth, float windowHeight){
-
   vector2D screenCenter;
   screenCenter.x = windowWidth/2-(*Player).width/2;
   screenCenter.y = windowHeight/2-(*Player).height/2;

@@ -84,7 +84,8 @@ if (!(*Player).isShoot && mousePos.x > 0 && mousePos.y > 0){
     (*Player).tongue.y = (*Player).y + (*Player).height/2 + (*Player).shootDir.y * (*Player).shootSpeed;
 }
 else if ((*Player).isShoot &&  !(*Player).isUsedAllLengthOfTongue){
-    (*Player).shootDir = getNormalized(0, 0, (*Player).shootDir.x*1.1, (*Player).shootDir.y*1.1);
+    (*Player).shootDir = getNormalized((*Player).x + (*Player).width/2, (*Player).y + (*Player).height/2,
+                                       (*Player).tongue.x, (*Player).tongue.y);
 
     // Define tongue position
     (*Player).tongue.x += (*Player).shootDir.x * (*Player).shootSpeed;

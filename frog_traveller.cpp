@@ -12,6 +12,7 @@
 #include"mobs.h"
 #include"decoration.h"
 #include"camera.h"
+#include"uiux.h"
 
 
 int main(void) {
@@ -65,7 +66,15 @@ int main(void) {
     if(Player.isShoot){ // draw if you clicked mouse
     circle(Player.tongue.x, Player.tongue.y, 10);
     }
-    //Player.speed = Player.defaultSpeed * deltatime;
+
+    // Food Points
+    drawFoodPoints(Player);
+    if(Player.foodPoints <= 0){
+        closegraph();
+    }
+    Player.foodPoints--;
+    Player.defaultFoodPoints = 1500;
+    //std::cout << Player.defaultFoodPoints << std::endl;
 
 
     for(int i=0; i<amountSceneObjects; i++){
@@ -78,10 +87,14 @@ int main(void) {
         if(Creatures[i].isExist){
             circle(Creatures[i].x, Creatures[i].y, Creatures[i].radiusCollision);
         }
+
         MobCalmMovement(Creatures, i);
         LootMob(Creatures, i, &Player);
         MobResistance(Creatures, i, &Player);
+
+        updateFoodPoints(Creatures, i, &Player);
     }
+    updateCreaturesList(Creatures);
 
 
     vector2D dir = inputKey(); // get input keys

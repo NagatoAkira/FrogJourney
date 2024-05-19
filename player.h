@@ -12,6 +12,10 @@ float height = 50;
 float defaultSpeed = 7;
 float speed = defaultSpeed;
 
+
+float defaultFoodPoints = 1500;
+float foodPoints = defaultFoodPoints;
+
 vector2D tongue;
 vector2D shootDir;
 
@@ -116,5 +120,7 @@ else if ((*Player).isShoot && (*Player).isUsedAllLengthOfTongue){
 
 }
 }
+
+
 
 

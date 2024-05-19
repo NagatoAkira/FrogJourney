@@ -22,6 +22,7 @@ int waitTime = 0; // Don't change
 
 bool isCatched = false; // State of catching mob by tongue
 bool isExist = true; // State of existing mob
+bool isAte = false;
 };
 
 
@@ -102,6 +103,13 @@ if(Creatures[index].waitTime > 0){
     Creatures[index].waitTime--;
 }
 
+}
+
+void updateFoodPoints(Mob Creatures[], int index,  player *Player){
+    if(!Creatures[index].isExist && !Creatures[index].isAte){
+        (*Player).foodPoints += 450;
+        Creatures[index].isAte = true;
+    }
 }
 
 

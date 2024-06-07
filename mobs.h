@@ -105,11 +105,36 @@ if(Creatures[index].waitTime > 0){
 
 }
 
-void updateFoodPoints(Mob Creatures[], int index,  player *Player){
+void updateFoodPointsMob(Mob Creatures[], int index,  player *Player){
     if(!Creatures[index].isExist && !Creatures[index].isAte){
         (*Player).foodPoints += 450;
         Creatures[index].isAte = true;
     }
+}
+
+void SpawnAroundCreatures(Mob Creatures[], Mob template_, int scrW, int scrH){
+srand(time(NULL));
+int rand_x, rand_y;
+
+for(int i=0; i<sizeof(Creatures); i++){
+    if(Creatures[i].x < scrW &&
+       Creatures[i].y < scrH &&
+       Creatures[i].x > 0 &&
+       Creatures[i].y > 0){
+       continue;
+    }
+
+
+    Creatures[i] = template_;
+
+    // Create random number from square side around Player
+    rand_x = rand()%scrW;
+    rand_y = rand()%scrH;
+
+
+    Creatures[i].x = rand_x;
+    Creatures[i].y = rand_y;
+}
 }
 
 

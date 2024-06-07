@@ -74,6 +74,10 @@ output.y = -1;
 return output;
 }
 
+void drawPlayer(player Player){
+ rectangle(Player.x,Player.y, Player.x+Player.width, Player.y+Player.height); // draw Player as rectangle
+}
+
 void Shoot(player *Player){
 vector2D mousePos = inputMouse();
 if (!(*Player).isShoot && mousePos.x > 0 && mousePos.y > 0){
@@ -119,6 +123,12 @@ else if ((*Player).isShoot && (*Player).isUsedAllLengthOfTongue){
     }
 
 }
+}
+
+void drawBullet(player Player){
+    if(Player.isShoot){ // draw if you clicked mouse
+    circle(Player.tongue.x, Player.tongue.y, 10);
+    }
 }
 
 

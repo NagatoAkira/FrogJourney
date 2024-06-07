@@ -5,8 +5,8 @@
 #include<iostream>
 
 #include<math.h>
+#include<chrono>
 
-#include"deltatime.h"
 #include"base.h"
 #include"player.h"
 #include"mobs.h"
@@ -14,9 +14,7 @@
 #include"camera.h"
 #include"uiux.h"
 
-
 int main(void) {
-   float deltatime;
 
    // Initiate window
    float windowWidth = 800;
@@ -28,62 +26,49 @@ int main(void) {
    Player.x = windowWidth/2-Player.width/2;
    Player.y = windowHeight/2-Player.height/2;
 
+   // Creating Mob template
    Mob Bug;
-   Bug.x = 150;
-   Bug.y = 150;
+   Bug.x = -1024;
+   Bug.y = -1024;
    Bug.radiusCollision = 35;
 
-   int amountCreatures = 1;
+   int amountCreatures = 25;
    Mob Creatures[amountCreatures];
-   Creatures[0] = Bug;
 
 
+   // Creating Decoration template
    EnvironmentObject tree;
-   tree.x = 50;
-   tree.y = 150;
+   tree.x = -1024;
+   tree.y = -1024;
    tree.width = 20;
    tree.height = 100;
 
-   int amountSceneObjects = 5;
+   int amountSceneObjects = 40;
    EnvironmentObject Scene[amountSceneObjects];
-   for(int i=0; i<amountSceneObjects; i++){
-    Scene[i] = tree;
-    Scene[i].x += i*35;
-   }
 
    int page = 0;
    while(true){
     setactivepage(page);
     setvisualpage(1-page);
 
-    deltatime = getDeltaTime();
     cleardevice(); // Clear screen
-    rectangle(Player.x,Player.y, Player.x+Player.width, Player.y+Player.height); // draw Player as rectangle
+    drawPlayer(Player); // Draw Player
 
 
 
-    Shoot(&Player); // function for shooting by tongue
-    if(Player.isShoot){ // draw if you clicked mouse
-    circle(Player.tongue.x, Player.tongue.y, 10);
-    }
+    Shoot(&Player); // Function for shooting by tongue
+    drawBullet(Player); // Draw Player
 
     // Food Points
-    drawFoodPoints(Player);
-    if(Player.foodPoints <= 0){
-        closegraph();
-    }
-    Player.foodPoints--;
-    Player.defaultFoodPoints = 1500;
-    //std::cout << Player.defaultFoodPoints << std::endl;
+    updateFoodPoints(&Player);
 
+    // Spawn Decoration
+    SpawnAroundDecoration(Scene, tree, windowWidth, windowHeight);
+    drawDecoration(amountSceneObjects, Scene);
 
-    for(int i=0; i<amountSceneObjects; i++){
-    rectangle(Scene[i].x, Scene[i].y, Scene[i].x+Scene[i].width, Scene[i].y+Scene[i].height);
-    }
-
+    // Spawn Creatures
+    SpawnAroundCreatures(Creatures, Bug, windowWidth, windowHeight);
     for(int i=0; i<amountCreatures; i++){
-        //Creatures[i].speed = Creatures[i].defaultSpeed * deltatime;
-
         if(Creatures[i].isExist){
             circle(Creatures[i].x, Creatures[i].y, Creatures[i].radiusCollision);
         }
@@ -92,9 +77,9 @@ int main(void) {
         LootMob(Creatures, i, &Player);
         MobResistance(Creatures, i, &Player);
 
-        updateFoodPoints(Creatures, i, &Player);
+        updateFoodPointsMob(Creatures, i, &Player);
     }
-    updateCreaturesList(Creatures);
+    updateCreaturesList(Creatures); // Update List to clean "dead" creatures
 
 
     vector2D dir = inputKey(); // get input keys
